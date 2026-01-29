@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Limit Predictor</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Righteous&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --success: #10b981;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: 
+                radial-gradient(at 20% 30%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 80% 70%, rgba(245, 158, 11, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(99, 102, 241, 0.03) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '💳';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.05;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            z-index: -1;
+        }
+
+        .header h1 {
+            font-family: 'Righteous', cursive;
+            font-size: 3.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spaci
+                0 20px 50px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(99, 102, 241, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            animation: fadeInUp 0.8s ease-out;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .card:hover::before {
+            left: 100%finite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 5px rgba(99, 102, 241, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.8)); };
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 
+                0 0 0 4px rgba(99, 102, 241, 0.15),
+                inset 0 2px 4px rgba(0, 0, 0, 0.2),
+                0 4px 12px rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+            background: rgba(15, 23, 42, 0.8);
+        }
+        
+        input:hover, select:hover {
+            border-color: rgba(99, 102, 241, 0.5
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .label-icon {
+            font-size: 1.1rem;
+        }
+
+        input, select {
+            padding: 14px 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-predict::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .btn-predict:hover::before {
+            opacity: 1;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.5
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);5) 0%, rgba(245, 158, 11, 0.15) 100%);
+            border: 2px solid var(--primary);
+            text-align: center;
+            animation: slideIn 0.5s ease-out, pulse 2s ease-in-out infinite;
+            box-shadow: 
+                0 10px 40px rgba(99, 102, 241, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-section::before {
+            content: '✨';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2rem;
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: rotate(0deg) scale(1); }
+            animation: countUp 0.8s ease-out;
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+        
+        @keyframes countUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px) scale(0.8);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+            50% { opacity: 1; transform: rotate(180deg) scale(1.2); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 10px 50px rgba(99, 102, 241, 0.5); }
+
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-predict {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-predict:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid var(--border);
+        }
+
+        .btn-reset:hover {
+            border-color: var(--text-primary);
+            color: var(--text-primary);
+            transform: translateY(-3px);
+        }
+
+        .result-section {
+            margin-top: 30px;
+            padding: 30px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+            border: 2px solid var(--primary);
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .result-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .result-subtext {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-section h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .info-section ul {
+            list-style: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .info-section li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-section li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .card {
+                padding: 24px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-amount {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        function CreditCardPredictor() {
+            const [formData, setFormData] = useState({
+                sex: '1',
+                education: '1',
+                marriage: '1',
+                age: '',
+                pay_0: '0',
+                pay_2: '0',
+                pay_3: '0',
+                pay_4: '0',
+                pay_5: '0',
+                pay_6: '0',
+                bill_amt3: '',
+                bill_amt4: '',
+                bill_amt5: '',
+                bill_amt6: ''
+            });
+
+            const [prediction, setPrediction] = useState(null);
+
+            const handleChange = (e) => {
+                setFormData({
+                    ...formData,
+                    [e.target.name]: e.target.value
+                });
+            };
+
+            const handlePredict = async () => {
+                // Check for missing values
+                const requiredFields = ['age', 'bill_amt3', 'bill_amt4', 'bill_amt5', 'bill_amt6'];
+                for (let field of requiredFields) {
+                    if (!formData[field] || formData[field] === '') {
+                        alert('Please fill in all fields!');
+                        return;
+                    }
+                }
+
+                try {
+                    // Show loading state
+                    setPrediction('loading');
+
+                    // Send data to Flask API
+                    const response = await fetch('http://localhost:5000/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Prediction failed');
+                    }
+
+                    const data = await response.json();
+                    setPrediction(data.prediction);
+                } catch (error) {
+                    alert('Error: ' + error.message + '\n\nMake sure the Flask server is running!\nRun: python app.py');
+                    setPrediction(null);
+                }
+            };
+
+            const handleReset = () => {
+                setFormData({
+                    sex: '1',
+                    education: '1',
+                    marriage: '1',
+                    age: '',
+                    pay_0: '0',
+                    pay_2: '0',
+                    pay_3: '0',
+                    pay_4: '0',
+                    pay_5: '0',
+                    pay_6: '0',
+                    bill_amt3: '',
+                    bill_amt4: '',
+                    bill_amt5: '',
+                    bill_amt6: ''
+                });
+                setPrediction(null);
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>💳 Credit Limit Predictor</h1>
+                        <p>Enter your information to get an estimated credit limit</p>
+                        <p style={{
+                            fontSize: '0.85rem',
+                            color: 'var(--text-secondary)',
+                            marginTop: '10px',
+                            fontStyle: 'italic'
+                        }}>
+                            Powered by Linear Regression model trained on credit card history data
+                            {' '}• {' '}
+                            <a 
+                                href="creditcardhistory.ipynb"
+                                style={{
+                                    color: 'var(--secondary)',
+                                    textDecoration: 'none',
+                                    borderBottom: '1px dotted var(--secondary)'
+                                }}
+                                onMouseOver={(e) => e.target.style.borderBottom = '1px solid var(--secondary)'}
+                                onMouseOut={(e) => e.target.style.borderBottom = '1px dotted var(--secondary)'}
+                            >
+                                View Notebook
+                            </a>
+                        </p>
+                    </div>
+
+                    <div className="card">
+                        <div className="form-grid">
+                            <div className="form-group">
+                                <label><span className="label-icon">👤</span> Sex</label>
+                                <select name="sex" value={formData.sex} onChange={handleChange}>
+                                    <option value="1">Male</option>
+                                    <option value="2">Female</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">🎓</span> Education</label>
+                                <select name="education" value={formData.education} onChange={handleChange}>
+                                    <option value="1">Graduate School</option>
+                                    <option value="2">University</option>
+                                    <option value="3">High School</option>
+                                    <option value="4">Others</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">💑</span> Marital Status</label>
+                                <select name="marriage" value={formData.marriage} onChange={handleChange}>
+                                    <option value="1">Married</option>
+                                    <option value="2">Single</option>
+                                    <option value="3">Others</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">🎂</span> Age</label>
+                                <input
+                                    type="number"
+                                    name="age"
+                                    value={formData.age}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 30"
+                                    min="18"
+                                    max="100"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">📅</span> Payment Status - September</label>
+                                <select name="pay_0" value={formData.pay_0} onChange={handleChange}>
+                                    <option value="-2">No Credit Usage</option>
+                                    <option value="-1">Paid on Time</option>
+                                    <option value="0">Revolving Credit</option>
+                                    <option value="1">1 Month Delay</option>
+                                    <option value="2">2 Months Delay</option>
+                                    <option value="3">3 Months Delay</option>
+                                    <option value="4">4 Months Delay</option>
+                                    <option value="5">5 Months Delay</option>
+                                    <option value="6">6 Months Delay</option>
+                                    <option value="7">7 Months Delay</option>
+                                    <option value="8">8 Months Delay</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">📅</span> Payment Status - August</label>
+                                <select name="pay_2" value={formData.pay_2} onChange={handleChange}>
+                                    <option value="-2">No Credit Usage</option>
+                                    <option value="-1">Paid on Time</option>
+                                    <option value="0">Revolving Credit</option>
+                                    <option value="1">1 Month Delay</option>
+                                    <option value="2">2 Months Delay</option>
+                                    <option value="3">3 Months Delay</option>
+                                    <option value="4">4 Months Delay</option>
+                                    <option value="5">5 Months Delay</option>
+                                    <option value="6">6 Months Delay</option>
+                                    <option value="7">7 Months Delay</option>
+                                    <option value="8">8 Months Delay</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">📅</span> Payment Status - July</label>
+                                <select name="pay_3" value={formData.pay_3} onChange={handleChange}>
+                                    <option value="-2">No Credit Usage</option>
+                                    <option value="-1">Paid on Time</option>
+                                    <option value="0">Revolving Credit</option>
+                                    <option value="1">1 Month Delay</option>
+                                    <option value="2">2 Months Delay</option>
+                                    <option value="3">3 Months Delay</option>
+                                    <option value="4">4 Months Delay</option>
+                                    <option value="5">5 Months Delay</option>
+                                    <option value="6">6 Months Delay</option>
+                                    <option value="7">7 Months Delay</option>
+                                    <option value="8">8 Months Delay</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">📅</span> Payment Status - June</label>
+                                <select name="pay_4" value={formData.pay_4} onChange={handleChange}>
+                                    <option value="-2">No Credit Usage</option>
+                                    <option value="-1">Paid on Time</option>
+                                    <option value="0">Revolving Credit</option>
+                                    <option value="1">1 Month Delay</option>
+                                    <option value="2">2 Months Delay</option>
+                                    <option value="3">3 Months Delay</option>
+                                    <option value="4">4 Months Delay</option>
+                                    <option value="5">5 Months Delay</option>
+                                    <option value="6">6 Months Delay</option>
+                                    <option value="7">7 Months Delay</option>
+                                    <option value="8">8 Months Delay</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">📅</span> Payment Status - May</label>
+                                <select name="pay_5" value={formData.pay_5} onChange={handleChange}>
+                                    <option value="-2">No Credit Usage</option>
+                                    <option value="-1">Paid on Time</option>
+                                    <option value="0">Revolving Credit</option>
+                                    <option value="1">1 Month Delay</option>
+                                    <option value="2">2 Months Delay</option>
+                                    <option value="3">3 Months Delay</option>
+                                    <option value="4">4 Months Delay</option>
+                                    <option value="5">5 Months Delay</option>
+                                    <option value="6">6 Months Delay</option>
+                                    <option value="7">7 Months Delay</option>
+                                    <option value="8">8 Months Delay</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">📅</span> Payment Status - April</label>
+                                <select name="pay_6" value={formData.pay_6} onChange={handleChange}>
+                                    <option value="-2">No Credit Usage</option>
+                                    <option value="-1">Paid on Time</option>
+                                    <option value="0">Revolving Credit</option>
+                                    <option value="1">1 Month Delay</option>
+                                    <option value="2">2 Months Delay</option>
+                                    <option value="3">3 Months Delay</option>
+                                    <option value="4">4 Months Delay</option>
+                                    <option value="5">5 Months Delay</option>
+                                    <option value="6">6 Months Delay</option>
+                                    <option value="7">7 Months Delay</option>
+                                    <option value="8">8 Months Delay</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">💰</span> Bill Amount - July (₹)</label>
+                                <input
+                                    type="number"
+                                    name="bill_amt3"
+                                    value={formData.bill_amt3}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 20000"
+                                    min="0"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">💰</span> Bill Amount - June (₹)</label>
+                                <input
+                                    type="number"
+                                    name="bill_amt4"
+                                    value={formData.bill_amt4}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 22000"
+                                    min="0"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">💰</span> Bill Amount - May (₹)</label>
+                                <input
+                                    type="number"
+                                    name="bill_amt5"
+                                    value={formData.bill_amt5}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 21000"
+                                    min="0"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon">💰</span> Bill Amount - April (₹)</label>
+                                <input
+                                    type="number"
+                                    name="bill_amt6"
+                                    value={formData.bill_amt6}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 23000"
+                                    min="0"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="btn-container">
+                            <button className="btn-predict" onClick={handlePredict}>
+                                🔮 Predict Now
+                            </button>
+                            <button className="btn-reset" onClick={handleReset}>
+                                🔄 Reset Form
+                            </button>
+                        </div>
+
+                        {prediction !== null && (
+                            <div className="result-section">
+                                <div className="result-label">Estimated Credit Limit</div>
+                                <div className="result-amount">
+                                    {prediction === 'loading' ? (
+                                        <span style={{fontSize: '2rem'}}>⏳ Calculating...</span>
+                                    ) : (
+                                        `₹${prediction.toLocaleString('en-IN', { maximumFractionDigits: 0 })}`
+                                    )}
+                                </div>
+                                <div className="result-subtext">
+                                    {prediction === 'loading' 
+                                        ? 'Please wait while we process your request' 
+                                        : 'This is an estimated limit calculated by our Linear Regression model'}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="info-section">
+                            <h3>ℹ️ Important Information</h3>
+                            <ul>
+                                <li>This is a Machine Learning based estimation</li>
+                                <li>Actual credit limit depends on bank policies and credit bureau data</li>
+                                <li>Model trained on 30,000 customer records</li>
+                                <li>Better payment history leads to higher credit limits</li>
+                            </ul>
+                        </div>
+
+                        <div className="info-section" style={{marginTop: '20px', borderLeftColor: 'var(--secondary)'}}>
+                            <h3>📊 Model Development & Training</h3>
+                            <p style={{color: 'var(--text-secondary)', marginBottom: '15px', fontSize: '0.9rem'}}>
+                                This prediction model was developed using Linear Regression on credit card history data.
+                                View the complete data analysis and model training process in the Jupyter notebook:
+                            </p>
+                            <button 
+                                onClick={() => window.location.href = 'creditcardhistory.ipynb'}
+                                style={{
+                                    padding: '12px 24px',
+                                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    fontSize: '0.95rem',
+                                    fontWeight: '600',
+                                    fontFamily: 'Poppins, sans-serif',
+                                    transition: 'all 0.3s ease',
+                                    width: '100%'
+                                }}
+                                onMouseOver={(e) => {
+                                    e.target.style.transform = 'translateY(-2px)';
+                                    e.target.style.boxShadow = '0 8px 20px rgba(245, 158, 11, 0.4)';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.target.style.transform = 'translateY(0)';
+                                    e.target.style.boxShadow = 'none';
+                                }}
+                            >
+                                📓 Open Training Notebook
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<CreditCardPredictor />, document.getElementById('root'));
+    </script>
+</body>
+</html>
