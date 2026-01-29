@@ -462,8 +462,13 @@
                     // Show loading state
                     setPrediction('loading');
 
-                    // Send data to Flask API
-                    const response = await fetch('http://localhost:5000/predict', {
+                    // Determine API URL (for local or Vercel)
+                    const apiUrl = window.location.hostname === 'localhost' 
+                        ? 'http://localhost:5000/predict'
+                        : '/api/predict';
+
+                    // Send data to API
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -479,7 +484,7 @@
                     const data = await response.json();
                     setPrediction(data.prediction);
                 } catch (error) {
-                    alert('Error: ' + error.message + '\n\nMake sure the Flask server is running!\nRun: python app.py');
+                    alert('Error: ' + error.message + '\n\nPlease try again or contact support.');
                     setPrediction(null);
                 }
             };
