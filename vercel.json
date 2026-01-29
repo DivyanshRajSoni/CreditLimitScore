@@ -4,12 +4,20 @@
     {
       "src": "api/index.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/predict",
       "dest": "api/index.py"
+    },
+    {
+      "src": "/",
+      "dest": "/creditcardpred.html"
     },
     {
       "src": "/(.*)",
