@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Righteous&display=swap" rel="stylesheet">
     <style>
         * {
@@ -68,7 +69,9 @@
         }
         
         .header::after {
-            content: '💳';
+            content: '\f09d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
             position: absolute;
             font-size: 8rem;
             opacity: 0.05;
@@ -208,7 +211,9 @@
             position: relative;
             overflow: hidden;
         }
-        
+        \f005';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900
         .result-section::before {
             content: '✨';
             position: absolute;
@@ -348,7 +353,9 @@
             padding-left: 20px;
             position: relative;
         }
-
+\f00c";
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900
         .info-section li:before {
             content: "✓";
             position: absolute;
@@ -496,7 +503,7 @@
                 });
                 setPrediction(null);
             };
-
+<i className="fas fa-credit-card"></i>
             return (
                 <div className="container">
                     <div className="header">
@@ -524,11 +531,7 @@
                             </a>
                         </p>
                     </div>
-
-                    <div className="card">
-                        <div className="form-grid">
-                            <div className="form-group">
-                                <label><span className="label-icon">👤</span> Sex</label>
+<i className="fas fa-user"></i></span> Sex</label>
                                 <select name="sex" value={formData.sex} onChange={handleChange}>
                                     <option value="1">Male</option>
                                     <option value="2">Female</option>
@@ -536,7 +539,7 @@
                             </div>
 
                             <div className="form-group">
-                                <label><span className="label-icon">🎓</span> Education</label>
+                                <label><span className="label-icon"><i className="fas fa-graduation-cap"></i></span> Education</label>
                                 <select name="education" value={formData.education} onChange={handleChange}>
                                     <option value="1">Graduate School</option>
                                     <option value="2">University</option>
@@ -546,12 +549,16 @@
                             </div>
 
                             <div className="form-group">
-                                <label><span className="label-icon">💑</span> Marital Status</label>
+                                <label><span className="label-icon"><i className="fas fa-heart"></i></span> Marital Status</label>
                                 <select name="marriage" value={formData.marriage} onChange={handleChange}>
                                     <option value="1">Married</option>
                                     <option value="2">Single</option>
                                     <option value="3">Others</option>
                                 </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label><span className="label-icon"><i className="fas fa-birthday-cake"></i>
                             </div>
 
                             <div className="form-group">
@@ -564,7 +571,7 @@
                                     placeholder="e.g. 30"
                                     min="18"
                                     max="100"
-                                />
+                                /><i className="fas fa-calendar-alt"></i>
                             </div>
 
                             <div className="form-group">
@@ -581,7 +588,7 @@
                                     <option value="6">6 Months Delay</option>
                                     <option value="7">7 Months Delay</option>
                                     <option value="8">8 Months Delay</option>
-                                </select>
+                                </select><i className="fas fa-calendar-alt"></i>
                             </div>
 
                             <div className="form-group">
@@ -598,7 +605,7 @@
                                     <option value="6">6 Months Delay</option>
                                     <option value="7">7 Months Delay</option>
                                     <option value="8">8 Months Delay</option>
-                                </select>
+                                </select><i className="fas fa-calendar-alt"></i>
                             </div>
 
                             <div className="form-group">
@@ -615,7 +622,7 @@
                                     <option value="6">6 Months Delay</option>
                                     <option value="7">7 Months Delay</option>
                                     <option value="8">8 Months Delay</option>
-                                </select>
+                                </select><i className="fas fa-calendar-alt"></i>
                             </div>
 
                             <div className="form-group">
@@ -632,7 +639,7 @@
                                     <option value="6">6 Months Delay</option>
                                     <option value="7">7 Months Delay</option>
                                     <option value="8">8 Months Delay</option>
-                                </select>
+                                </select><i className="fas fa-calendar-alt"></i>
                             </div>
 
                             <div className="form-group">
@@ -651,7 +658,7 @@
                                     <option value="8">8 Months Delay</option>
                                 </select>
                             </div>
-
+<i className="fas fa-calendar-alt"></i>
                             <div className="form-group">
                                 <label><span className="label-icon">📅</span> Payment Status - April</label>
                                 <select name="pay_6" value={formData.pay_6} onChange={handleChange}>
@@ -668,9 +675,7 @@
                                     <option value="8">8 Months Delay</option>
                                 </select>
                             </div>
-
-                            <div className="form-group">
-                                <label><span className="label-icon">💰</span> Bill Amount - July (₹)</label>
+<i className="fas fa-rupee-sign"></i></span> Bill Amount - July (₹)</label>
                                 <input
                                     type="number"
                                     name="bill_amt3"
@@ -682,7 +687,7 @@
                             </div>
 
                             <div className="form-group">
-                                <label><span className="label-icon">💰</span> Bill Amount - June (₹)</label>
+                                <label><span className="label-icon"><i className="fas fa-rupee-sign"></i></span> Bill Amount - June (₹)</label>
                                 <input
                                     type="number"
                                     name="bill_amt4"
@@ -694,7 +699,7 @@
                             </div>
 
                             <div className="form-group">
-                                <label><span className="label-icon">💰</span> Bill Amount - May (₹)</label>
+                                <label><span className="label-icon"><i className="fas fa-rupee-sign"></i></span> Bill Amount - May (₹)</label>
                                 <input
                                     type="number"
                                     name="bill_amt5"
@@ -705,6 +710,8 @@
                                 />
                             </div>
 
+                            <div className="form-group">
+                                <label><span className="label-icon"><i className="fas fa-rupee-sign"></i>
                             <div className="form-group">
                                 <label><span className="label-icon">💰</span> Bill Amount - April (₹)</label>
                                 <input
@@ -718,10 +725,10 @@
                             </div>
                         </div>
 
-                        <div className="btn-container">
-                            <button className="btn-predict" onClick={handlePredict}>
-                                🔮 Predict Now
+                        <div cla<i className="fas fa-magic"></i> Predict Now
                             </button>
+                            <button className="btn-reset" onClick={handleReset}>
+                                <i className="fas fa-redo"></i>on>
                             <button className="btn-reset" onClick={handleReset}>
                                 🔄 Reset Form
                             </button>
@@ -730,7 +737,7 @@
                         {prediction !== null && (
                             <div className="result-section">
                                 <div className="result-label">Estimated Credit Limit</div>
-                                <div className="result-amount">
+                                <div className="result-amount"><i className="fas fa-spinner fa-spin"></i>
                                     {prediction === 'loading' ? (
                                         <span style={{fontSize: '2rem'}}>⏳ Calculating...</span>
                                     ) : (
@@ -744,7 +751,7 @@
                                 </div>
                             </div>
                         )}
-
+<i className="fas fa-info-circle"></i>
                         <div className="info-section">
                             <h3>ℹ️ Important Information</h3>
                             <ul>
@@ -754,9 +761,7 @@
                                 <li>Better payment history leads to higher credit limits</li>
                             </ul>
                         </div>
-
-                        <div className="info-section" style={{marginTop: '20px', borderLeftColor: 'var(--secondary)'}}>
-                            <h3>📊 Model Development & Training</h3>
+<i className="fas fa-chart-line"></i> Model Development & Training</h3>
                             <p style={{color: 'var(--text-secondary)', marginBottom: '15px', fontSize: '0.9rem'}}>
                                 This prediction model was developed using Linear Regression on credit card history data.
                                 View the complete data analysis and model training process in the Jupyter notebook:
@@ -784,6 +789,8 @@
                                     e.target.style.transform = 'translateY(0)';
                                     e.target.style.boxShadow = 'none';
                                 }}
+                            >
+                                <i className="fas fa-book"></i>
                             >
                                 📓 Open Training Notebook
                             </button>
